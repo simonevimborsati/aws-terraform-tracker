@@ -18,22 +18,42 @@ flowchart LR
     end
     Client -.->|Scarica index.html| S3
 ```
-🛠️ Stack Tecnologico & Servizi AWS
-Infrastructure as Code: Terraform
+---
 
-Compute: AWS Lambda (Python 3.9)
+## 🛠️ Stack Tecnologico & Servizi AWS
 
-API Layer: AWS API Gateway (HTTP API)
+* **Infrastructure as Code:** Terraform
+* **Compute:** AWS Lambda (Python 3.9)
+* **API Layer:** AWS API Gateway (HTTP API)
+* **Database:** AWS DynamoDB (Pay-Per-Request)
+* **Storage & Hosting:** AWS S3 (Static Website Hosting)
+* **Security:** AWS IAM (Least-privilege execution roles)
 
-Database: AWS DynamoDB (Pay-Per-Request)
+---
 
-Storage & Hosting: AWS S3 (Static Website Hosting)
+## 💡 Funzionalità Principali
 
-Security: AWS IAM (Least-privilege execution roles)
+* **Serverless Architecture:** Nessun server da gestire, scaling automatico da zero a migliaia di richieste.
+* **CORS Configurato:** Gestione corretta delle intestazioni Cross-Origin per consentire le chiamate dal frontend S3 all'API Gateway.
+* **Auto-deploy con Terraform:** Il pacchetto ZIP di Lambda e l'upload dei file statici su S3 vengono gestiti direttamente dal codice IaC.
 
-💡 Funzionalità Principali
-Serverless Architecture: Nessun server da gestire, scaling automatico da zero a migliaia di richieste.
+---
 
-CORS Configurato: Gestione corretta delle intestazioni Cross-Origin per consentire le chiamate dal frontend S3 all'API Gateway.
+## 🚀 Come Replicare l'Infrastruttura
 
-Auto-deploy con Terraform: Il pacchetto ZIP di Lambda e l'upload dei file statici su S3 vengono gestiti direttamente dal codice IaC.
+### Prerequisiti
+* AWS CLI configurata (`aws configure`)
+* Terraform >= 1.0 installato
+
+### Deployment
+
+1. **Clona la repository:**
+   git clone https://github.com/simonevimborsati/aws-terraform-tracker.git
+   cd aws-terraform-tracker
+
+2. **Inizializza ed esegui Terraform:**
+   terraform init
+   terraform apply -auto-approve
+
+3. **Ottieni l'URL del sito:**
+   Al termine dell'esecuzione, Terraform stamperà l'endpoint pubblico S3 per testare l'applicazione.
