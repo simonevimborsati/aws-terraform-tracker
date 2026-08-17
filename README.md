@@ -16,5 +16,5 @@ flowchart LR
     subgraph Frontend
         S3[📦 AWS S3 Static Bucket]
     end
-    Client -.-|Scarica index.html| S3 
+    Client -.->|Scarica index.html| S3 
  ```
