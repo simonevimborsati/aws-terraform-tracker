@@ -8,13 +8,12 @@ Progetto di infrastruttura Cloud Serverless sviluppato interamente tramite **Ter
 
 ```mermaid
 flowchart LR
-    Client[🌐 Browser / Utente] -->|1. Richiesta HTTP POST| API[🔌 API Gateway]
-    API -->|2. Invocazione| Lambda[⚡ AWS Lambda]
-    Lambda -->|3. Scrittura Evento/UUID| DB[(🗄️ DynamoDB)]
-    Client <--|HTTP 200 OK + UUID| API
-    
+    Client["🌐 Browser / Utente"] -->|"1. Richiesta HTTP POST"| API["⚡ API Gateway"]
+    API -->|"2. Invocazione"| Lambda["⚡ AWS Lambda"]
+    Lambda -->|"3. Scrittura Evento"| DB[("🟪 DynamoDB")]
+    Client <--|"HTTP 200 OK"| API
+
     subgraph Frontend
-        S3[📦 AWS S3 Static Bucket]
+        S3["🪣 AWS S3 Static Bucket"]
     end
-    Client -.->|Scarica index.html| S3 
- ```
+    Client -.->|"Scarica index.html"| S3
