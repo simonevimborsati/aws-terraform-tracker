@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serverless Visitor Counter | AWS & Terraform</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #38bdf8;
+            --primary-hover: #0284c7;
+            --accent: #22c55e;
+            --border: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            line-height: 1.2;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: #0f172a;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-hover);
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-box {
+            margin-top: 25px;
+            padding: 16px;
+            border-radius: 8px;
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border);
+            display: none;
+            text-align: left;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .result-title {
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .result-id {
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--text-main);
+            word-break: break-all;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tech-stack {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <span class="badge">Cloud Infrastructure Live</span>
+        <h1>Serverless Visitor Tracker</h1>
+        <p class="subtitle">Registra l'evento in tempo reale archiviando i dati su AWS DynamoDB tramite API Gateway e Lambda.</p>
+
+        <button class="btn" id="trackBtn" onclick="registraVisita()">
+            <span>Invia Evento Cloud</span>
+        </button>
+
+        <div class="result-box" id="resultBox">
+            <div class="result-title">
+                ✓ Evento registrato su DynamoDB
+            </div>
+            <div class="result-id" id="eventId">--</div>
+        </div>
+
+        <div class="tech-stack">
+            <span>Terraform</span> • <span>AWS S3</span> • <span>API Gateway</span> • <span>Lambda</span> • <span>DynamoDB</span>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "https://v2n3tfp4k5.execute-api.us-east-1.amazonaws.com";
+
+        function registraVisita() {
+            const btn = document.getElementById("trackBtn");
+            const resultBox = document.getElementById("resultBox");
+            const eventId = document.getElementById("eventId");
+
+            btn.disabled = true;
+            btn.innerHTML = "<span>Elaborazione in corso...</span>";
+
+            fetch(API_URL, { method: "POST" })
+                .then(response => response.json())
+                .then(data => {
+                    eventId.innerText = "UUID: " + data.event_id;
+                    resultBox.style.display = "block";
+                    btn.innerHTML = "<span>Evento Inviato!</span>";
+                    btn.style.backgroundColor = "var(--accent)";
+                    btn.style.color = "#ffffff";
+                })
+                .catch(error => {
+                    alert("Errore durante l'invio dell'evento.");
+                    console.error("Errore:", error);
+                    btn.disabled = false;
+                    btn.innerHTML = "<span>Riprova</span>";
+                });
+        }
+    </script>
+
+</body>
+</html>
